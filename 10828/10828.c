@@ -1,90 +1,93 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-typedef struct	s_stack
+typedef struct	s_list
 {
 	int				data;
-	struct s_stack	*prev;
-}				t_stack;
+	struct s_list	*next;
+}				t_list;
 
-void	push(t_stack *node, int data)
+void	push(t_list **ptr, int data)
 {
-	t_stack new = {data, node};
-	node = &new;
+	t_list *lst;
+
+	lst = (t_list *)malloc(sizeof(t_list));
+	lst->data = data;
+	lst->next = NULL;
+	if (*ptr == NULL)
+		*ptr = lst;
+	else
+	{
+		lst->next = *ptr;
+		*ptr = lst;
+	}
 }
 
-int		pop(t_stack *node)
+int		pop(t_list **ptr)
 {
-	int res;
-	
-	if (node == NULL)
+	int ret;
+
+	if (*ptr == NULL)
 		return (-1);
-	else
-	{
-		res = node->data;
-		node = node->prev;
-		return (res);
-	}
+	ret = (*ptr)->data;
+	*ptr = (*ptr)->next;
+	return (ret);
 }
 
-int		size(t_stack *node)
+int		peek(t_list *lst)
 {
-	int		res;
-	t_stack	*tmp;
-
-	res = 0;
-	tmp = node;
-	while (tmp)
-	{
-		++res;
-		tmp = node->prev;
-	}
-	return (res);
-}
-
-int		empty(t_stack *node)
-{
-	if (node = NULL)
-		return (1);
-	else
-		return (0);
-}
-
-int		top(t_stack *node)
-{
-	if (empty(node))
+	if (lst == NULL)
 		return (-1);
-	else
-		return (node->data);
+	return (lst->data);
 }
 
-int		equals(char *s1, char *s2)
+int		size(t_list *lst)
 {
-	while (*s1 && *s2)
+	int ret;
+
+	ret = 0;
+	while (lst)
 	{
-		if (*s1 != *s2)
-			return (0);
-		++s1;
-		++s2;
+		++ret;
+		lst = lst->next;
 	}
-	if (*s1 == 0 && *s2 == 0)
+	return (ret);
+}
+
+int		is_empty(t_list *lst)
+{
+	if (lst == NULL)
 		return (1);
-	else
-		return (0);
+	return (0);
 }
 
-int		solve(char *s)
+int		main(void)
 {
-	
-}
+	int		n;
+	int		d;
+	char	str[6];
+	t_list	*top;
 
-int		main()
-{
-	int cnt;
-
-	cnt = 0;
-	scanf("%d", &cnt);
-	for (int i=0; i<cnt; i++)
+	top = NULL;
+	scanf("%d", &n);
+	for (int i=0; i<n; i++)
 	{
-		
+		scanf("%s", str);
+		if (strcmp(str, "push") == 0)
+		{
+			scanf("%d", &d);
+			push(&top, d);
+		}
+		else if (strcmp(str, "pop") == 0)
+			printf("%d\n", pop(&top));
+		else if (strcmp(str, "top") == 0)
+			printf("%d\n", peek(top));
+		else if (strcmp(str, "size") == 0)
+			printf("%d\n", size(top));
+		else if (strcmp(str, "empty") == 0)
+			printf("%d\n", is_empty(top));
 	}
+
+	return 0;
 }
